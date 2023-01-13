@@ -3,7 +3,7 @@ void json1()
   StaticJsonBuffer<350> JSONbuffer;
   JsonObject& JSONencoder = JSONbuffer.createObject();
 
-  JSONencoder["SOC"] = soc;
+  JSONencoder["SOC"] = socHighRes;
   JSONencoder["I"] = current - 30000;
   JSONencoder["C"] = capacity;
   JSONencoder["V1"] = totVlt1;
@@ -31,25 +31,29 @@ void json1()
   JsonObject& JSONencoder2 = JSONbuffer2.createObject();
 
   JsonArray& values = JSONencoder2.createNestedArray("values");
-  values.add(cellVmV[0]);
-  values.add(cellVmV[1]);
-  values.add(cellVmV[2]);
-  values.add(cellVmV[3]);
-  values.add(cellVmV[4]);
-  values.add(cellVmV[5]);
-  values.add(cellVmV[6]);
-  values.add(cellVmV[7]);
-  values.add(cellVmV[8]);
-  values.add(cellVmV[9]);
-  values.add(cellVmV[10]);
-  values.add(cellVmV[11]);
-  values.add(cellVmV[12]);
-  values.add(cellVmV[13]);
-  values.add(cellVmV[14]);
-  values.add(cellVmV[15]);
-
+  for (int i = 0; i < 16; i++)
+  {
+    values.add(sampleAndHold(cellVmV[i], i));
+  }
+  /*
+       values.add(cellVmV[1]);
+    values.add(cellVmV[2]);
+    values.add(cellVmV[3]);
+    values.add(cellVmV[4]);
+    values.add(cellVmV[5]);
+    values.add(cellVmV[6]);
+    values.add(cellVmV[7]);
+    values.add(cellVmV[8]);
+    values.add(cellVmV[9]);
+    values.add(cellVmV[10]);
+    values.add(cellVmV[11]);
+    values.add(cellVmV[12]);
+    values.add(cellVmV[13]);
+    values.add(cellVmV[14]);
+    values.add(cellVmV[15]);
+  */
   char JSONmessageBuffer2[350];
   JSONencoder2.printTo(JSONmessageBuffer2, sizeof(JSONmessageBuffer2));
-  client.publish("Solar/BMS/cellvoltages", JSONmessageBuffer2);
+  client.publish(ACT_CELL_TOPIC, JSONmessageBuffer2);
 
 }

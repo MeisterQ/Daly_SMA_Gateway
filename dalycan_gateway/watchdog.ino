@@ -7,12 +7,3 @@ void watchdog(int watchdogTime)
     client.publish(STATE_WATCHDOG_TOPIC, "true");
   }
 }
-
-void watchWifi()
-{
-  if (WiFi.status() != WL_CONNECTED && withoutWifi == false)
-  {
-    withoutWifi = true;
-    ESP.restart();
-  }
-}

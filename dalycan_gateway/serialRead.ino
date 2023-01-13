@@ -7,7 +7,7 @@ void readSer()
       data[i] = swSer.read();
       delay(2);
     }
-    //check();
+    //  check();
     checkData();
   }
 }
@@ -35,30 +35,21 @@ void check()
   checksum2 = data[0] + data[1] + data[2] + data[3] + data[4] + data[5] + data[6] + data[7] + data[8] + data[9] + data[10] + data[11];
   JSONencoder3["Checksum"] = lowByte(checksum2);
 
-
   if (data[12] == checksum2)
   {
-    reqNum++;
-    client.publish(STATE_DEBUG_TOPIC, "Checksum ok");
+    JSONencoder3["Status"] = true;
+  }
+  else
+  {
+    JSONencoder3["Status"] = false;
   }
 
-
-  /*
-    if (data[12] == checksum2)
-    {
-    JSONencoder3["Status"] = true;
-    }
-    else
-    {
-    JSONencoder3["Status"] = false;
-    }
-  */
 
 
 
   char JSONmessageBuffer3[350];
   JSONencoder3.printTo(JSONmessageBuffer3, sizeof(JSONmessageBuffer3));
-//  client.publish("Solar/BMS/act/test", JSONmessageBuffer3);
+  client.publish("Solar/BMS/act/test", JSONmessageBuffer3);
 }
 
 void checkData()
@@ -67,6 +58,8 @@ void checkData()
   if (data[2] == 0x90)
   {
     soc = (data[10] << 8) + data[11];
+    socHighRes = soc;
+    soc = soc / 10;
     current = (data[8] << 8) + data[9];
     totVlt1 = (data[4] << 8) + data[5];
     totVlt2 = (data[6] << 8) + data[7];
@@ -79,25 +72,25 @@ void checkData()
     }
     else
     {
-      if (soc > 1000)
+      if (soc > 100)
       {
-        socValid = false;
         soc = lastSoC;
+        socValid = false;
       }
-      else if (soc == 1000)
+      else if (soc == 100)
       {
+        soc = 100;
         socValid = true;
-        soc = 1000;
       }
-      else if (soc > lastSoC + 50)
+      else if (soc > lastSoC + 5)
       {
-        socValid = false;
         soc = lastSoC;
+        socValid = false;
       }
-      else if (soc < lastSoC - 50)
+      else if (soc < lastSoC - 5)
       {
-        socValid = false;
         soc = lastSoC;
+        socValid = false;
       }
       else
       {
@@ -109,7 +102,6 @@ void checkData()
     {
       lastSoC = soc;
     }
-
   }
 
 
@@ -119,29 +111,9 @@ void checkData()
     maxCelNo = data[6];
     maxCelVlt = (data[4] << 8) + data[5];
     minCelVlt = (data[7] << 8) + data[8];
-
-
-    if (cellFirstRead)
-    {
-      cellFirstRead = false;
-    }
-    else
-    {
-      if (minCelVlt < 2500)
-      {
-        minCelVlt = lastMinCelVlt;
-      }
-      if (maxCelVlt > 3700)
-      {
-        maxCelVlt = lastMaxCelVlt;
-      }
-    }
-    lastMinCelVlt = minCelVlt;
-    lastMaxCelVlt = maxCelVlt;
     diffCelVlt = maxCelVlt - minCelVlt;
 
   }
-
 
 
   // Mosfet State and BMS State Capacity
@@ -199,6 +171,8 @@ void checkData()
       cellVmV[16] = (data[7] << 8) + data[8];
       cellVmV[17] = (data[9] << 8) + data[10];
     }
+
+
   }
 
   // Temperature
