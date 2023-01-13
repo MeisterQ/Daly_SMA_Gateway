@@ -5,7 +5,7 @@ A gateway between BMS UART and Sunny Island CAN
 ESP32 based board
 
 
-Preparation:
+##Preparation:
 
 You need a ESP32 with CAN transceiver and some free GPIOs
 
