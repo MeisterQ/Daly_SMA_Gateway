@@ -35,23 +35,6 @@ void json1()
   {
     values.add(sampleAndHold(cellVmV[i], i));
   }
-  /*
-       values.add(cellVmV[1]);
-    values.add(cellVmV[2]);
-    values.add(cellVmV[3]);
-    values.add(cellVmV[4]);
-    values.add(cellVmV[5]);
-    values.add(cellVmV[6]);
-    values.add(cellVmV[7]);
-    values.add(cellVmV[8]);
-    values.add(cellVmV[9]);
-    values.add(cellVmV[10]);
-    values.add(cellVmV[11]);
-    values.add(cellVmV[12]);
-    values.add(cellVmV[13]);
-    values.add(cellVmV[14]);
-    values.add(cellVmV[15]);
-  */
   char JSONmessageBuffer2[350];
   JSONencoder2.printTo(JSONmessageBuffer2, sizeof(JSONmessageBuffer2));
   client.publish(ACT_CELL_TOPIC, JSONmessageBuffer2);

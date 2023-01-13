@@ -12,6 +12,6 @@ void bms()
     request(0x94);
     request(0x95);
     request(0x96);
-    json1();    // Aufarbeiten der Daten in ein JSON Objekt
+    json1();
   }
 }

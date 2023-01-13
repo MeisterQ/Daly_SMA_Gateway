@@ -9,7 +9,6 @@ int request(byte command)
 }
 
 
-
 void chargeOn()
 {
   swSer.write(chgOn, sizeof(chgOn));

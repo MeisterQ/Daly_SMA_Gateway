@@ -5,9 +5,7 @@ void canConfig()
   CAN_cfg.rx_pin_id = GPIO_NUM_35;
   CAN_cfg.rx_queue = xQueueCreate(rx_queue_size, sizeof(CAN_frame_t));
   ESP32Can.CANInit();
-
 }
-
 
 void can()
 {
@@ -16,23 +14,23 @@ void can()
   {
     previousMillisCAN  = currentMillisCAN ;
 
-    sohLow =  soh & 0xff; // Nur die unteren 8 Bit
-    sohHigh = soh >> 8; // um 8 Bit nach rechts schieben
+    sohLow =  soh & 0xff;
+    sohHigh = soh >> 8;
 
-    socLow =  soc & 0xff; // Nur die unteren 8 Bit
-    socHigh = soc >> 8; // um 8 Bit nach rechts schieben
+    socLow =  soc & 0xff;
+    socHigh = soc >> 8;
 
-    chgVltLow =  chgVlt & 0xff; // Nur die unteren 8 Bit
-    chgVltHigh = chgVlt >> 8; // um 8 Bit nach rechts schieben
+    chgVltLow =  chgVlt & 0xff;
+    chgVltHigh = chgVlt >> 8;
 
-    chgCurLow =  chgCur & 0xff; // Nur die unteren 8 Bit
-    chgCurHigh = chgCur >> 8; // um 8 Bit nach rechts schieben
+    chgCurLow =  chgCur & 0xff;
+    chgCurHigh = chgCur >> 8;
 
-    disCurLow =  disCur & 0xff; // Nur die unteren 8 Bit
-    disCurHigh = disCur >> 8; // um 8 Bit nach rechts schieben
+    disCurLow =  disCur & 0xff;
+    disCurHigh = disCur >> 8;
 
-    disVltLow =  disVlt & 0xff; // Nur die unteren 8 Bit
-    disVltHigh = disVlt >> 8; // um 8 Bit nach rechts schieben
+    disVltLow =  disVlt & 0xff;
+    disVltHigh = disVlt >> 8;
 
     data351[0] = chgVltLow;
     data351[1] = chgVltHigh;

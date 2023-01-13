@@ -2,26 +2,26 @@
 // Created by MeisterQ
 // V00.01.01
 
-
+// Include needed librarys
 #include <ETH.h>
-#include <ArduinoOTA.h>             // OTA Library
-#include <PubSubClient.h>           // MQTT Library
+#include <ArduinoOTA.h>             
+#include <PubSubClient.h>           
 #include <ArduinoJson.h>
 #include <ESP32CAN.h>
 #include <CAN_config.h>
 #include <SoftwareSerial.h>
 #include <ArduinoJson.h>
-//#include <CAN.h>
+#include <credentials.h>
 
 #define MQTT_MAX_PACKET_SIZE 2500
 
 // Software Serial
 #define RXPin 13
 #define TXPin 16
-SoftwareSerial swSer(RXPin, TXPin); // Hier Softwareserial Pins (RX, TX)
+SoftwareSerial swSer(RXPin, TXPin); // RX, TX
 
 /*
-  ---------------------- Variablen BMS ------------------
+  ---------------------- BMS -----------------------
 */
 byte message[] = { 0xA5, 0x40, 0x93, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80 };
 
@@ -49,7 +49,6 @@ byte bmsState = 0;
 byte minCelNo = 0;
 byte maxCelNo = 0;
 
-
 int vpv;
 int cellVmV[17];
 int cellVmVlast[17];
@@ -73,7 +72,6 @@ unsigned long previousMillisRelais1 = 0;
 
 
 uint32_t capacity = 0;
-//uint32_t soc = 0;
 uint32_t lastSoC = 0;
 
 char checksum = 0;
@@ -89,10 +87,7 @@ char buf[BUFFER_SIZE];
   ------------------------ Mosquitto --------------------------
 */
 
-const char* mqtt_server = "192.168.10.173";                        // MQTT Server IP
-
-WiFiClient espClient;                                             // WiFi client
-PubSubClient client(espClient);                                   // Client für MQTT
+const char* mqtt_server = mqttServer;
 
 /*
   ------------------------ MQTT Topics --------------------------
@@ -139,14 +134,17 @@ char relay2StateMSG[2];
 
 
 /*
-  ---------------------- Netzwerk Einstellungen ------------------
+  ---------------------- Network ------------------
 */
 
 
-IPAddress ip(192, 168, 10, 51);                   // IP mit der sich der ESP in das Netzwerk verbinden soll
-IPAddress gateway(192, 168, 10, 1);                // Gateway des Netzwerks
-IPAddress subnet(255, 255, 255, 0);               // Subnetmask
-IPAddress dns(192, 168, 10, 1);
+IPAddress ip(192, 168, 10, 51);       // IP
+IPAddress gateway(192, 168, 10, 1);   // Gateway
+IPAddress subnet(255, 255, 255, 0);   // Subnet
+IPAddress dns(192, 168, 10, 1);       // DNS
+
+WiFiClient espClient;
+PubSubClient client(espClient);
 
 /*
   ---------------------- Variablen CAN ----------------------------
@@ -167,6 +165,8 @@ int disVlt = 432;
 int disCur = 1200;
 int timeoutCnt = 0;
 int canID = 0;
+int failCounter = 0;
+int waitCounter = 10;
 
 byte socLow, socHigh;
 byte chgVltLow, chgVltHigh;
@@ -179,10 +179,6 @@ byte data355[8] = {socLow, socHigh, sohLow, sohHigh};
 byte data351[8] = {chgVltLow, chgVltHigh, chgCurLow, chgCurHigh, disCurLow, disCurHigh, disVltLow, disVltHigh};
 byte data35[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-//int ergebnis = 0;
-int failCounter = 0;
-int waitCounter = 10;
-
 unsigned long previousMillisCAN = 0;
 long intervalCAN = 1000;
 unsigned long merker = 0;
@@ -193,12 +189,12 @@ void setup()
 {
   delay(1000);
   Serial.begin(115200);
-  swSer.begin(9600);      // Serielle Verbindung zum BMS Starten
+  swSer.begin(9600); 
   ethSettings();
   canConfig();
-  mqttSettings();                 // MQTT Konfigurieren
-  OTAsettings();                  // OTA Konfigurieren
-  mqttHandle();                  // MQTT-Verbindung aufbauen
+  mqttSettings();
+  OTAsettings();
+  mqttHandle();
   pinState();
 
 
@@ -207,13 +203,13 @@ void setup()
 
   pinMode(RELAY1, OUTPUT);
   pinMode(RELAY2, OUTPUT);
-  client.publish(STATE_DEBUG_TOPIC, "Setup Done");    // Nachricht an MQTT-Server schicken
+  client.publish(STATE_DEBUG_TOPIC, "Setup Done");
 }
 
 void loop()
 {
-  ArduinoOTA.handle();            // OTA Handle
-  mqttHandle();                   // Sende Daten an MQTT Server
+  ArduinoOTA.handle();
+  mqttHandle();
   bms();
   watchdog(5000);
   pinState();

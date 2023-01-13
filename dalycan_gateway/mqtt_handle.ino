@@ -20,17 +20,6 @@ void receivedCallback(char* topic, byte * payload, unsigned int length) {
   }
   Serial.println();
 
-  // SOC
-  /*
-    if (strcmp((char*)topic, ACT_SOC_TOPIC) == 0)
-    {
-    payload[length] = '\0';
-    String s = String((char*)payload);
-    soc = s.toInt();
-    //    Serial.println(s);
-    //    Serial.println(soc);
-    }
-  */
   // CHGVLT
   if (strcmp((char*)topic, ACT_CHGVLT_TOPIC) == 0)
   {
@@ -104,7 +93,7 @@ void receivedCallback(char* topic, byte * payload, unsigned int length) {
     }
   }
 
-  // Setze Abfragezeit von ESP zu BMS
+  // Polltime
   if (strcmp((char*)topic, CTRL_REQUEST_TOPIC) == 0)
   {
     ergebnis = 0;
@@ -113,7 +102,7 @@ void receivedCallback(char* topic, byte * payload, unsigned int length) {
   }
 
 
-  // Entlade-Mosfets An/Aus
+  // Discharge-Mosfets On / Off
   if (strcmp((char*)topic,  CTRL_DISC_TOPIC ) == 0)
   {
     if (strncmp((char*)payload, "true", length) == 0)
@@ -126,7 +115,7 @@ void receivedCallback(char* topic, byte * payload, unsigned int length) {
     }
   }
 
-  // Lade-Mosfets An/Aus
+  // Charge-Mosfets On / Off
   if (strcmp((char*)topic,  CTRL_CHG_TOPIC ) == 0)
   {
     if (strncmp((char*)payload, "true", length) == 0)
